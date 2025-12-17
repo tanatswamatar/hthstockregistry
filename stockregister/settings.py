@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise must be here
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -140,13 +141,6 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 # 3. Allow Render's domain
 ALLOWED_HOSTS = ['*'] # You can narrow this down to 'your-app.render.com' later
-
-# 4. Add Whitenoise for Static Files
-MIDDLEWARE = [
-            'django.middleware.security.SecurityMiddleware',
-                'whitenoise.middleware.WhiteNoiseMiddleware', # Place right here
-                    # ... rest of middleware ...
-                    ]
 
 # 5. Configure Database for Render
 DATABASES = {
