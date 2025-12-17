@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <form action="{% url 'dashboard' %}" method="GET" class="d-flex">
+            <input class="form-control form-control-lg me-2 shadow-sm" type="search" name="q" 
+                   placeholder="Search Grower Number or Surname..." value="{{ query|default:'' }}">
+            <button class="btn btn-primary px-4 shadow-sm" type="submit">SEARCH</button>
+        </form>
+    </div>
+</div>
+
+{% if search_results is not None %}
+<div class="card border-primary mb-4 shadow">
+    <div class="card-header bg-primary text-white">Results for "{{ query }}"</div>
+    <div class="list-group list-group-flush">
+        {% for grower in search_results %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <span><strong>{{ grower.grower_no }}</strong> - {{ grower.first_name }} {{ grower.surname }}</span>
+            <div>
+                <a href="{% url 'grower_detail' grower.id %}" class="btn btn-sm btn-outline-dark">History</a>
+                <a href="{% url 'allocate_stock' %}?grower_no={{ grower.grower_no }}" class="btn btn-sm btn-success">Allocate</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-primary shadow-sm h-100 p-3">
+            <small class="text-muted text-uppercase fw-bold">Growers</small>
+            <h3 class="m-0">{{ total_growers }}</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-success shadow-sm h-100 p-3">
+            <small class="text-muted text-uppercase fw-bold">Issued Value</small>
+            <h3 class="m-0">${{ total_value|floatformat:2 }}</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-info shadow-sm h-100 p-3">
+            <small class="text-muted text-uppercase fw-bold">Admin Fee (9%)</small>
+            <h3 class="m-0">${{ admin_fee|floatformat:2 }}</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-danger shadow-sm h-100 p-3">
+            <small class="text-muted text-uppercase fw-bold">Grand Total</small>
+            <h3 class="m-0">${{ grand_total|floatformat:2 }}</h3>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white fw-bold">Field Officer Performance</div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Officer Name</th>
+                            <th class="text-center">Growers</th>
+                            <th class="text-end">Total Debt</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for officer in officer_stats %}
+                        <tr>
+                            <td>{{ officer.name }}</td>
+                            <td class="text-center">{{ officer.grower_count }}</td>
+                            <td class="text-end fw-bold">${{ officer.total_debt|default:0|floatformat:2 }}</td>
+                            <td class="text-center">
+                                <a href="{% url 'officer_growers' officer.id %}" class="btn btn-sm btn-outline-dark">View Growers</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white fw-bold">
+                Warehouse Stock Status
+            </div>
+            <ul class="list-group list-group-flush">
+    {% for item in inventory %}
+    <li class="list-group-item px-3 py-2">
+        <div class="d-flex align-items-center justify-content-between">
+            
+            <div class="fw-bold text-dark flex-grow-1" style="min-width: 120px;">
+                {{ item.name }}
+            </div>
+
+            <div class="d-flex gap-1" style="min-width: 160px;">
+                <div class="text-center bg-primary text-white rounded px-2 py-1 shadow-sm" style="min-width: 75px;">
+                    <small class="d-block fw-bold" style="font-size: 0.6rem; opacity: 0.9;">AVAIL</small>
+                    <span class="fw-bold">{{ item.current_stock }}</span>
+                </div>
+
+                <div class="text-center bg-success text-white rounded px-2 py-1 shadow-sm" style="min-width: 75px;">
+                    <small class="d-block fw-bold" style="font-size: 0.6rem; opacity: 0.9;">ISSUED</small>
+                    <span class="fw-bold">{{ item.total_issued|default:0 }}</span>
+                </div>
+            </div>
+
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+            <div class="card-footer bg-light text-center">
+                <a href="{% url 'export_excel' %}" class="btn btn-sm btn-outline-success w-100">Export Final Excel Sheet</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
