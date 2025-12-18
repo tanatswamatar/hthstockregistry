@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Register System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark mb-4 shadow">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+            <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}" class="btn btn-warning btn-sm">STOCK REGISTER</a>
+	    </div>
+	    <div class="d-flex gap-2 ml-auto" >
+            <a href="{% url 'allocate_stock' %}" class="btn btn-warning btn-sm">+ ALLOCATE STOCK</a>
+    <a href="{% url 'wage_request' %}" class="btn btn-primary">
+        <i class="fas fa-file-invoice-dollar"></i> Request Wages
+    </a>
+
+	    
+	{% if user.is_authenticated %}
+    <form method="post" action="{% url 'logout' %}" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-sm">
+            <i class="bi bi-box-arrow-right"></i> LOGOUT
+        </button>
+    </form>
+{% else %}
+    <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+{% endif %}
+    </nav>
+	    </div>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
