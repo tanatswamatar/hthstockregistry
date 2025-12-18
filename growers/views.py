@@ -418,7 +418,7 @@ def wage_request(request):
             # 4. Create the PDF object, using the buffer as its "file"
             p = canvas.Canvas(buffer, pagesize=letter)
             width, height = letter
-            y = height - 20
+            y = height - 40
 
             # --- DRAWING THE PDF CONTENT ---
 
